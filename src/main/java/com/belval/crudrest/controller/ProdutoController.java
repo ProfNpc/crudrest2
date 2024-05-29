@@ -93,14 +93,14 @@ public class ProdutoController {
 	}
 	
 	//Observação: para métodos que não sejam o GET e o POST é necessário colocar o -X(menos xis maiúsculo)
-	//curl -X PUT http://localhost:8080/produtos/1 -H "Content-Type: application/json; Charset=utf-8" -d @produto-mortadela2.json
-	@PutMapping("/produtos/{id}")
+	//curl -X PUT http://localhost:8080/produtos -H "Content-Type: application/json; Charset=utf-8" -d @produto-mortadela2.json
+	@PutMapping("/produtos")
 	@Transactional
 	public ResponseEntity<Object> atualizarProduto(
-			@PathVariable(value = "id")Integer id,
 			@RequestBody Produto produto) {
 		
-		Optional<Produto> produtoEncontrado = repository.findById(id);
+		//Aqui estamos considerando que o id vem no json de produto
+		Optional<Produto> produtoEncontrado = repository.findById(produto.getId());
 		
 		if (produtoEncontrado.isEmpty()) {
 			return ResponseEntity
@@ -108,7 +108,6 @@ public class ProdutoController {
 					.body("Produto não encontrado.");
 		}
 		
-		produto.setId(id);
 		Produto produtoManagedState = produtoEncontrado.get();
 		BeanUtils.copyProperties(produto, produtoManagedState);
 		

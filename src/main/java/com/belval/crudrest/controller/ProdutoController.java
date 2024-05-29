@@ -2,6 +2,7 @@ package com.belval.crudrest.controller;
 
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.belval.crudrest.model.Produto;
 import com.belval.crudrest.repository.ProdutoRepository2;
+
+import jakarta.transaction.Transactional;
 
 @RestController
 public class ProdutoController {
@@ -92,6 +95,7 @@ public class ProdutoController {
 	//Observação: para métodos que não sejam o GET e o POST é necessário colocar o -X(menos xis maiúsculo)
 	//curl -X PUT http://localhost:8080/produtos/1 -H "Content-Type: application/json; Charset=utf-8" -d @produto-mortadela2.json
 	@PutMapping("/produtos/{id}")
+	@Transactional
 	public ResponseEntity<Object> atualizarProduto(
 			@PathVariable(value = "id")Integer id,
 			@RequestBody Produto produto) {
@@ -105,7 +109,15 @@ public class ProdutoController {
 		}
 		
 		produto.setId(id);
-		repository.save(produto);
+		Produto produtoManagedState = produtoEncontrado.get();
+		BeanUtils.copyProperties(produto, produtoManagedState);
+		
+		//Com @Transactional não precisa chamar o método save(),
+		//basta alterar os atributos da entidade retornada pelo repository
+		//pois ela está no estado "admistrado"(managed state).
+		//Nesse estado qualquer alteração de um atributo é detectado pelo 
+		//hibernate e será atualizado quando o método terminar.
+		//repository.save(produto);
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)

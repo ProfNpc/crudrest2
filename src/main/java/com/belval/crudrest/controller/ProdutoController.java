@@ -45,6 +45,8 @@ public class ProdutoController {
 	@PostMapping("/produtos")
 	public ResponseEntity<Produto> criarProduto(@RequestBody Produto produto) {
 		
+		System.out.println("Produto criado => " + produto.toString());
+		
 		repository.save(produto);
 		
 		return ResponseEntity

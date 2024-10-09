@@ -18,7 +18,7 @@ import com.belval.crudrest.repository.ProdutoRepository;
 
 @RestController
 public class ProdutoController {
-	
+
 	@Autowired
     private ProdutoRepository repository;
 	
@@ -33,6 +33,8 @@ public class ProdutoController {
 	
 	@PostMapping("/produtos")
 	public ResponseEntity<Produto> criarProduto(@RequestBody Produto produto) {
+		
+		System.out.println("Produto criado => " + produto.toString());
 		
 		repository.save(produto);
 		

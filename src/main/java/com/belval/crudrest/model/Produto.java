@@ -83,7 +83,6 @@ public class Produto {
 	}
 	
 	
-
 	public LocalDateTime getDataCriacao() {
 		return dataCriacao;
 	}
